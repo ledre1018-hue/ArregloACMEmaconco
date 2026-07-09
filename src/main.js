@@ -77,6 +77,14 @@ function renderApp() {
             <acme-toast></acme-toast>
         `;
         setupLayoutListeners();
+
+        // IMPORTANTE: se dispara despues de insertar el HTML del dashboard
+        // en el DOM, porque loadDashboardStats() busca elementos por id
+        // (stat-productos, stat-mp, etc.) que solo existen una vez que
+        // renderDashboard() ya fue pintado dentro de app.innerHTML.
+        if (AppState.currentModule === 'dashboard') {
+            loadDashboardStats();
+        }
     }
 }
 
@@ -107,6 +115,40 @@ function renderDashboard() {
             <div class="card-body"><ul class="alert-list" id="dashboard-alertas"></ul></div>
         </div>
     `;
+}
+
+async function loadDashboardStats() {
+    try {
+        const inventario = await dataManager.obtenerInventario();
+
+        const materiaPrima = inventario.filter(p => p.tipo === 'materia_prima');
+        const productosTerminados = inventario.filter(p => p.tipo === 'producto_terminado');
+
+        const stockBajo = inventario.filter(p => {
+            const minimo = parseFloat(p.stockMinimo);
+            const stockActual = parseFloat(p.stock) || 0;
+            return minimo > 0 && stockActual <= minimo;
+        });
+
+        const statProductos = document.getElementById('stat-productos');
+        const statMp = document.getElementById('stat-mp');
+        const statPt = document.getElementById('stat-pt');
+        const statStockBajo = document.getElementById('stat-stock-bajo');
+
+        if (statProductos) statProductos.textContent = inventario.length;
+        if (statMp) statMp.textContent = materiaPrima.length;
+        if (statPt) statPt.textContent = productosTerminados.length;
+        if (statStockBajo) statStockBajo.textContent = stockBajo.length;
+
+        const lista = document.getElementById('dashboard-alertas');
+        if (lista) {
+            lista.innerHTML = stockBajo.length
+                ? stockBajo.map(p => `<li>${p.nombre} — stock: ${p.stock}${p.unidad ? ' ' + p.unidad : ''} (mínimo: ${p.stockMinimo})</li>`).join('')
+                : '<li>No hay alertas de stock bajo</li>';
+        }
+    } catch (err) {
+        console.error('[Dashboard] Error cargando estadísticas:', err);
+    }
 }
 
 function setupLoginListener() {
