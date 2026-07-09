@@ -64,6 +64,7 @@ function renderApp() {
                         <a href="#" data-module="dashboard" class="${AppState.currentModule === 'dashboard' ? 'active' : ''}">Panel General</a>
                         <a href="#" data-module="inventory" class="${AppState.currentModule === 'inventory' ? 'active' : ''}">Inventario</a>
                         <a href="#" data-module="production" class="${AppState.currentModule === 'production' ? 'active' : ''}">Producción</a>
+                        <a href="#" data-module="reports" class="${AppState.currentModule === 'reports' ? 'active' : ''}">Reportes</a>
                         <a href="#" data-module="users" class="${AppState.currentModule === 'users' ? 'active' : ''}">Usuarios</a>
                     </nav>
                     <div class="sidebar-footer">
@@ -78,12 +79,11 @@ function renderApp() {
         `;
         setupLayoutListeners();
 
-        // IMPORTANTE: se dispara despues de insertar el HTML del dashboard
-        // en el DOM, porque loadDashboardStats() busca elementos por id
-        // (stat-productos, stat-mp, etc.) que solo existen una vez que
-        // renderDashboard() ya fue pintado dentro de app.innerHTML.
+        // Cargar datos según módulo
         if (AppState.currentModule === 'dashboard') {
             loadDashboardStats();
+        } else if (AppState.currentModule === 'reports') {
+            loadReports();
         }
     }
 }
@@ -94,6 +94,7 @@ function renderModule() {
         case 'inventory': return '<acme-inventory></acme-inventory>';
         case 'production': return '<acme-production></acme-production>';
         case 'users': return '<acme-users></acme-users>';
+        case 'reports': return renderReports();
         default: return renderDashboard();
     }
 }
@@ -191,5 +192,96 @@ function init() {
     loadSession();
     renderApp();
 }
+function renderReports() {
+    return `
+        <div class="page-header">
+            <h2>Reportes</h2>
+            <p>5 Productos Más Fabricados</p>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3>Top 5 Productos Más Fabricados</h3>
+                <button class="btn btn-outline btn-sm" id="report-export">Exportar CSV</button>
+            </div>
+            <div class="card-body" id="top-products-report">Cargando reporte...</div>
+        </div>
+    `;
+}
 
+async function loadReports() {
+    try {
+        const produccion = await dataManager.obtenerProduccion();
+        renderTopProductsReport(produccion);
+        setupReportExport();
+    } catch (err) {
+        console.error(err);
+        document.getElementById('top-products-report').innerHTML = '<p style="color:red">Error al cargar</p>';
+    }
+}
+
+function renderTopProductsReport(produccion) {
+    const container = document.getElementById('top-products-report');
+    if (!container) return;
+
+    const stats = {};
+    produccion.forEach(r => {
+        const k = r.codigoProducto;
+        if (!stats[k]) stats[k] = { codigo: r.codigoProducto, nombre: r.nombreProducto, total: 0, mp: {} };
+        stats[k].total += Number(r.cantidadProducida) || 0;
+        (r.materiaPrimaConsumida || []).forEach(m => {
+            if (!stats[k].mp[m.codigo]) stats[k].mp[m.codigo] = { nombre: m.nombre, total: 0 };
+            stats[k].mp[m.codigo].total += Number(m.cantidad) || 0;
+        });
+    });
+
+    const top5 = Object.values(stats).sort((a,b) => b.total - a.total).slice(0,5);
+
+    if (top5.length === 0) {
+        container.innerHTML = `<p style="color:#9ca3af;text-align:center;padding:3rem;">Aún no hay producciones registradas.</p>`;
+        return;
+    }
+
+    let html = `<div style="display:grid;gap:1.25rem;">`;
+    top5.forEach(p => {
+        html += `
+            <div style="border:1px solid #e1ddd3;border-radius:4px;padding:1.25rem;background:#f9f8f5;">
+                <strong>${p.codigo} — ${p.nombre}</strong> 
+                <span style="float:right;color:#2f6659;font-weight:600;">${p.total} unidades</span>
+                <div style="margin-top:0.75rem;font-size:0.8125rem;color:#5b6577;">
+                    <strong>MP utilizada:</strong><br>
+                    ${Object.values(p.mp).map(m => `• ${m.nombre}: ${m.total}`).join('<br>')}
+                </div>
+            </div>`;
+    });
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function setupReportExport() {
+    const btn = document.getElementById('report-export');
+    if (btn) btn.addEventListener('click', async () => {
+        const produccion = await dataManager.obtenerProduccion();
+        exportTopProductsReport(produccion);
+    });
+}
+
+function exportTopProductsReport(produccion) {
+    const stats = {};
+    produccion.forEach(r => {
+        const k = r.codigoProducto;
+        if (!stats[k]) stats[k] = { codigo: r.codigoProducto, nombre: r.nombreProducto, total: 0, mp: {} };
+        stats[k].total += Number(r.cantidadProducida) || 0;
+        (r.materiaPrimaConsumida || []).forEach(m => {
+            if (!stats[k].mp[m.codigo]) stats[k].mp[m.codigo] = { nombre: m.nombre, total: 0 };
+            stats[k].mp[m.codigo].total += Number(m.cantidad) || 0;
+        });
+    });
+
+    const top5 = Object.values(stats).sort((a,b) => b.total - a.total).slice(0,5);
+
+    const headers = ['Código', 'Producto', 'Total Producido', 'Materia Prima Utilizada'];
+    const rows = top5.map(p => [p.codigo, p.nombre, p.total, Object.values(p.mp).map(m => `${m.nombre}:${m.total}`).join(' | ')]);
+
+    exportarCSV('top5_productos_mas_fabricados.csv', headers, rows);
+}
 document.addEventListener('DOMContentLoaded', init);
