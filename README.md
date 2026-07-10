@@ -1,30 +1,31 @@
-# 🏭 Acme Produccion - Macondo
+# 🏭 Acme Producción - Macondo
 
-Sistema de automatizacion del proceso productivo para la planta Acme en la ciudad de Macondo.
+Sistema de automatización del proceso productivo para la planta Acme en la ciudad de Macondo.
 
-## 📋 Descripcion del Proyecto
+## 📋 Descripción del Proyecto
 
-Aplicacion web desarrollada con **HTML5**, **CSS3** y **JavaScript Vanilla (ES6+)** que permite gestionar:
+Aplicación web desarrollada con **HTML5**, **CSS3** y **JavaScript Vanilla (ES6+)** que permite gestionar:
 
-- **Usuarios:** Registro y autenticacion con doble validacion de contrasena
-- **Inventario/Bodega:** Control de materia prima y productos terminados con formulas
-- **Produccion:** Motor de transformacion que consume materia prima y genera productos terminados
+- **Usuarios:** Registro y autenticación con doble validación de contraseña.
+- **Inventario/Bodega:** Control de materia prima y productos terminados con fórmulas.
+- **Producción:** Motor de transformación que consume materia prima y genera productos terminados.
+- **Reportes:** Módulo analítico visual con métricas clave de la producción de la planta.
 
 La persistencia de datos se realiza en **Firebase Realtime Database** mediante la API REST utilizando `fetch` con `async/await`.
 
 ---
 
-## 🚀 Como Ejecutar el Proyecto
+## 🚀 Cómo Ejecutar el Proyecto
 
-### Opcion 1: Servidor Local (Recomendado)
+### Opción 1: Servidor Local (Recomendado)
 
-1. Clonar o descargar el repositorio
-2. Abrir el proyecto en **Visual Studio Code**
-3. Instalar la extension **Live Server** (Ritwick Dey)
-4. Clic derecho en `index.html` → **"Open with Live Server"**
-5. El navegador se abrira automaticamente en `http://127.0.0.1:5500`
+1. Clonar o descargar el repositorio.
+2. Abrir el proyecto en **Visual Studio Code**.
+3. Instalar la extensión **Live Server** (Ritwick Dey).
+4. Clic derecho en `index.html` → **"Open with Live Server"**.
+5. El navegador se abrirá automáticamente en `http://127.0.0.1:5500`.
 
-### Opcion 2: Servidor Python
+### Opción 2: Servidor Python
 
 ```bash
 # Python 3
@@ -32,34 +33,22 @@ python -m http.server 5500
 
 # Python 2
 python -m SimpleHTTPServer 5500
-```
+Luego abrir: http://localhost:5500
 
-Luego abrir: `http://localhost:5500`
+Opción 3: Node.js (http-server)
+npx http-server -p 5500⚠️ Importante
+Es necesario usar un servidor local (no abrir el HTML directamente) debido a los módulos ES6 (type="module") y la política CORS.
 
-### Opcion 3: Node.js (http-server)
-
-```bash
-npx http-server -p 5500
-```
-
-### ⚠️ Importante
-
-- Es necesario usar **un servidor local** (no abrir el HTML directamente) debido a los modulos ES6 (`type="module"`) y la politica CORS.
-- La base de datos Firebase ya esta configurada y lista para usar.
-
----
-
-## 🏗️ Estructura del Proyecto
-
-```
+La base de datos Firebase ya está configurada y lista para usar.
+ Estructura del Proyecto
 proyecto-acme-macondo/
 │
 ├── index.html                  # Punto de entrada principal
 ├── style.css                   # Estilos globales, responsive, temas
-├── README.md                   # Documentacion tecnica
+├── README.md                   # Documentación técnica
 │
 ├── src/
-│   ├── main.js                 # Orquestador principal de la app
+│   ├── main.js                 # Orquestador principal de la app y ruteo de módulos
 │   │
 │   ├── data/
 │   │   └── dataManager.js      # Centralizador de peticiones Firebase
@@ -69,23 +58,16 @@ proyecto-acme-macondo/
 │   │   ├── acme-toast.js       # Sistema de notificaciones emergentes
 │   │   ├── acme-login.js       # Login y registro de usuarios
 │   │   ├── acme-users.js       # CRUD completo de usuarios
-│   │   ├── acme-inventory.js   # Gestion de inventario y formulas
-│   │   └── acme-production.js  # Motor de produccion
+│   │   ├── acme-inventory.js   # Gestión de inventario y fórmulas
+│   │   └── acme-production.js  # Motor de producción
 │   │
-│   └── modules/                # Logica operativa independiente
-│       ├── auth.js             # Autenticacion y sesiones
+│   └── modules/                # Lógica operativa independiente
+│       ├── auth.js             # Autenticación y sesiones
 │       ├── inventory.js        # Operaciones de bodega
-│       └── production.js       # Motor de transformacion
-```
+│       └── production.js       # Motor de transformación
 
----
-Ejemplo:
-
-## 🗄️ Estructura de Datos en Firebase
-
-### Nodo: `usuarios`
-
-```json
+Estructura de Datos en Firebase
+Nodo: usuarios
 {
   "usuarios": {
     "-O1AbC2dE3fG4hI5jK6l": {
@@ -97,11 +79,7 @@ Ejemplo:
     }
   }
 }
-```
-
-### Nodo: `inventario`
-
-```json
+Nodo: inventario
 {
   "inventario": {
     "-O2MnO3pQ4rS5tU6vW7x": {
@@ -130,13 +108,8 @@ Ejemplo:
     }
   }
 }
-```
-
-> `unidad` y `stockMinimo` son campos adicionales opcionales: los productos creados antes de esta actualizacion siguen funcionando igual, simplemente no muestran unidad ni alerta de stock minimo hasta que se editen.
-
-### Nodo: `produccion`
-
-```json
+unidad y stockMinimo son campos adicionales opcionales: los productos creados antes de esta actualización siguen funcionando igual, simplemente no muestran unidad ni alerta de stock mínimo hasta que se editen.
+Nodo: produccion
 {
   "produccion": {
     "-O4KlM5nO6pQ7rS8tU9v": {
@@ -150,17 +123,13 @@ Ejemplo:
         { "codigo": "MP-002", "nombre": "Mantequilla", "cantidad": 1000, "stockAnterior": 300, "stockNuevo": 200 },
         { "codigo": "MP-003", "nombre": "Huevo", "cantidad": 10, "stockAnterior": 100, "stockNuevo": 90 }
       ],
-      "usuarioNombre": "Juan Perez",
+      "usuarioNombre": "Juan Pérez",
       "fecha": "2024-01-20T16:45:00.000Z",
       "timestamp": 1705767900000
     }
   }
 }
-```
-
-### Nodo: `mermas` (nuevo)
-
-```json
+Nodo: mermas
 {
   "mermas": {
     "-O5PqR6sT7uV8wX9yZ0a": {
@@ -171,155 +140,150 @@ Ejemplo:
       "motivo": "Producto vencido",
       "stockAnterior": 200,
       "stockNuevo": 180,
-      "usuario": "Juan Perez",
+      "usuario": "Juan Pérez",
       "fecha": "2024-01-21T09:15:00.000Z"
     }
   }
 }
-```
+⚡ Funcionalidades Implementadas
+🔐 Login / Autenticación
+Acceso por identificación + contraseña.
 
----
+Validación de credenciales contra Firebase.
 
-## ⚡ Funcionalidades Implementadas
+Navegación lateral oculta hasta el login exitoso.
 
-### 🔐 Login / Autenticacion
+Sesión persistente con localStorage (mantenimiento de estado al recargar).
 
-- Acceso por **identificacion + contrasena**
-- Validacion de credenciales contra Firebase
-- Navegacion lateral oculta hasta el login
-- Sesion persistente con `localStorage`
-- Cierre de sesion completo
-- Estados de carga (spinner) en los botones de login/registro
+Cierre de sesión completo con limpieza de almacenamiento local.
 
-### 👥 Modulo de Usuarios (CRUD)
+Estados de carga (spinners) visuales en los flujos de login/registro.
+👥 Módulo de Usuarios (CRUD)
+Crear usuario: ID, nombre completo, cargo y contraseña.
 
-- Crear usuario: ID, nombre completo, cargo, contrasena
-- **Doble validacion de contrasena** (password + confirmacion en tiempo real)
-- Editar usuario (cambiar nombre, cargo, password opcional)
-- Eliminar usuario con confirmacion
-- Busqueda en tiempo real por ID, nombre o cargo
-- **Paginacion** de la tabla (10 registros por pagina)
-- **Exportar a CSV**
+Doble validación de contraseña (password + confirmación en tiempo real).
 
-### 📦 Modulo de Inventario (CRUD + Bodega)
+Editar usuario (cambiar nombre, cargo, password opcional).
 
-- Crear producto: codigo, nombre, proveedor, tipo, stock inicial
-- **Tipos:** Materia Prima o Producto Terminado
-- **Unidad de medida** por producto (g, kg, ml, l, unidad, lb)
-- **Stock minimo configurable** con alerta visual en la tabla y en el Dashboard
-- **Formula/Receta** para productos terminados (materia prima + cantidad por unidad), mostrando la unidad de cada ingrediente
-- Ingresar materia prima al inventario (aumentar stock existente)
-- **Registro de mermas/perdidas** (producto, cantidad, motivo, usuario) que descuenta stock y queda en el nodo `mermas`
-- Editar producto (incluyendo formula, unidad y stock minimo)
-- Eliminar producto con confirmacion
-- **Buscador en tiempo real** por codigo, nombre o proveedor
-- **Validacion de codigo unico en tiempo real** (con debounce) al crear un producto
-- Visualizacion de tipo con badges de color
-- **Paginacion** y **exportacion a CSV**
+Eliminar usuario con confirmación preventiva.
 
-### 🏭 Modulo de Produccion (Motor de Transformacion)
+Búsqueda en tiempo real por ID, nombre o cargo.
 
-1. **Seleccion** del producto terminado a fabricar
-2. **Preview de formula** con verificacion de stock en tiempo real (incluye unidad de medida)
-3. **Validacion de stock:** compara stock actual vs requerido (formula x cantidad)
-4. **Transformacion:** resta materias primas y suma producto terminado
-5. **Consecutivo automatico** iniciando en 1, incrementando secuencialmente
-6. **Registro del usuario** que ejecuto la produccion (auditoria basica)
-7. **Guardado historico** en el nodo `produccion` de Firebase
-8. **Resumen de produccion** con materia prima consumida y cantidad fabricada
-9. **Historial completo** de todas las producciones con buscador, **paginacion** y **exportacion a CSV**
+Paginación integrada de la tabla (10 registros por página).
 
-### 📊 Panel General (Dashboard)
+Exportar a CSV.
 
-- Indicadores de productos, materia prima y productos terminados
-- **Alertas de stock bajo**: lista de productos por debajo de su stock minimo configurado
+📦 Módulo de Inventario (CRUD + Bodega)
+Crear producto: código, nombre, proveedor, tipo, stock inicial.
 
----
+Tipos: Materia Prima o Producto Terminado.
 
-## 🎨 Web Components Reutilizables
+Unidad de medida parametrizada por producto (g, kg, ml, l, unidad, lb).
 
-| Componente          | Descripcion                                               |
-| ------------------- | --------------------------------------------------------- |
-| `<acme-toast>`      | Notificaciones emergentes (success, error, warning, info) |
-| `<acme-login>`      | Formulario de login y registro con validaciones           |
-| `<acme-users>`      | Tabla y formulario CRUD de usuarios                       |
-| `<acme-inventory>`  | Tabla y formulario CRUD de inventario con formulas        |
-| `<acme-production>` | Motor de produccion con resumen e historial               |
+Stock mínimo configurable con alerta visual reactiva en la tabla y en el Dashboard.
 
----
+Fórmula/Receta para productos terminados (materia prima + cantidad por unidad), detallando unidades de ingredientes individuales.
 
-## 🔌 API de Firebase (dataManager.js)
+Ingresar materia prima al inventario (aumento dinámico de stock existente).
 
-| Metodo                             | Descripcion                               |
-| ---------------------------------- | ----------------------------------------- |
-| `obtenerTodos(node)`               | GET - Obtiene array de registros          |
-| `obtenerRaw(node)`                 | GET - Obtiene objeto raw de Firebase      |
-| `guardarArray(node, array)`        | PUT - Guarda array completo (sobrescribe) |
-| `agregarItem(node, item)`          | POST - Agrega item con key auto-generada  |
-| `actualizarItem(node, key, datos)` | PATCH - Actualiza campos especificos      |
-| `eliminarItem(node, key)`          | DELETE - Elimina un registro              |
-| `ejecutarProduccion(params)`       | Transaccion: guarda inventario + registro |
-| `obtenerSiguienteConsecutivo()`    | Calcula el siguiente numero de produccion |
+Registro de mermas/pérdidas (producto, cantidad, motivo, usuario) que descuenta stock directo y registra logs en el nodo mermas.
 
----
+Editar producto (incluyendo fórmula, unidad y stock mínimo).
 
-## 🛠️ Tecnologias Utilizadas
+Eliminar producto bajo confirmación.
 
-- **HTML5** - Estructura semantica
-- **CSS3** - Flexbox, Grid, Custom Properties, Animaciones, Responsive
-- **JavaScript ES6+** - Modulos, Clases, Async/Await, Arrow Functions, Spread
-- **Web Components** - Custom Elements, Shadow DOM, Templates
-- **Firebase Realtime Database** - Persistencia en la nube via REST API
-- **Fetch API** - Peticiones HTTP con async/await
+Buscador en tiempo real por código, nombre o proveedor.
 
----
+Validación de código único en tiempo real (con debounce) al crear un producto.
 
-## 📱 Responsive Design
+Visualización de tipo con badges de color.
 
-El sistema es completamente responsive:
+Paginación y exportación a CSV.
 
-- **Desktop (> 768px):** Sidebar fijo a la izquierda, contenido principal a la derecha
-- **Tablet/Mobile (<= 768px):** Sidebar colapsable con boton hamburguesa, layouts en columna
-- **Small Mobile (<= 480px):** Grids de 1 columna, tablas con scroll horizontal
+ Módulo de Producción (Motor de Transformación)Selección guiada del producto terminado a fabricar.Preview de fórmula con verificación de stock en tiempo real (incluye unidad de medida).Validación estricta de stock: compara stock actual vs requerido ($fórmula \times cantidad$).Transformación atómica: resta materias primas consumidas y suma el producto terminado obtenido.Consecutivo automático iniciando en 1, incrementando secuencialmente.Registro del usuario que ejecutó la producción (auditoría básica).Guardado histórico en el nodo produccion de Firebase.Resumen de producción con materia prima consumida y cantidad fabricada final.Historial completo de todas las producciones con buscador, paginación y exportación a CSV.
 
----
+ Panel General (Dashboard)
+Indicadores cuantitativos globales de productos totales, materia prima y productos terminados.
 
-## 🔒 Consideraciones de Seguridad
+Alertas de stock bajo: lista inteligente de productos por debajo de su stock mínimo configurado junto con sus respectivas unidades de medida.
 
-- Las contrasenas se almacenan en texto plano en Firebase (ejercicio academico)
-- En produccion real, usar hashing (bcrypt) y autenticacion de Firebase Auth
-- La base de datos tiene reglas basicas de lectura/escritura publica
+ Módulo de Reportes (Nuevo)
+Top 5 Productos Más Fabricados: Vista analítica que procesa el historial de producción para computar y ordenar de mayor a menor los productos más elaborados de la planta de forma agregada.
 
----
+Desglose de Consumo: Muestra el acumulado de toda la materia prima utilizada específicamente para la fabricación de cada uno de estos productos top.
 
-## 📊 Datos de Prueba (Opcional)
+Exportación Independiente: Permite la descarga del reporte analítico consolidado directamente a un archivo CSV (top5_productos_mas_fabricados.csv).
 
-Para probar el sistema rapidamente, puede crear los siguientes productos:
+ Web Components Reutilizables y Vistas
+Componente / MóduloDescripción
+<acme-toast>	Notificaciones emergentes dinámicas (success, error, warning, info).
+<acme-login>	Formulario de login y registro con validaciones integradas.
+<acme-users>	Tabla y formulario CRUD optimizado para usuarios.
+<acme-inventory>	Tabla y formulario CRUD de inventario con gestión avanzada de fórmulas.
+<acme-production>	Motor transaccional de producción con resumen e historial.
+renderDashboard()	Renderiza las métricas generales del estado de planta y alertas de stock mínimo.
+renderReports()	Renderiza la interfaz analítica del Top 5 de producción y consumo de MP.
 
-**Materias Primas:**
+API de Firebase (dataManager.js)
+Método   ---     Descripción
+obtenerTodos(node)	GET - Obtiene array de registros mapeados.
+obtenerRaw(node)	GET - Obtiene objeto raw directo de Firebase.
+guardarArray(node, array)	PUT - Guarda array completo (sobrescribe nodo).
+agregarItem(node, item)	POST - Agrega ítem con key auto-generada por Firebase.
+actualizarItem(node, key, datos)	PATCH - Actualiza campos específicos del registro.
+eliminarItem(node, key)	DELETE - Elimina un registro según su key única.
+ejecutarProduccion(params)	Transacción: guarda inventario actualizado + registro histórico.
+obtenerSiguienteConsecutivo()	Calcula secuencialmente el siguiente número de lote de producción.
 
-| Codigo | Nombre          | Stock Inicial |
-| ------ | --------------- | ------------- |
-| MP-001 | Harina de trigo | 10000         |
-| MP-002 | Mantequilla     | 5000          |
-| MP-003 | Huevo (unidad)  | 1000          |
-| MP-004 | Azucar          | 8000          |
-| MP-005 | Chocolate       | 3000          |
+ Tecnologías Utilizadas
+HTML5 - Estructura semántica avanzada.
 
-**Producto Terminado (ejemplo):**
+CSS3 - Flexbox, Grid, Custom Properties, Animaciones nativas, Responsive Layouts.
 
-| Codigo | Nombre                 | Formula                                  |
-| ------ | ---------------------- | ---------------------------------------- |
-| PT-001 | Galleta de mantequilla | 100g Harina + 100g Mantequilla + 1 Huevo |
+JavaScript ES6+ - Arquitectura modular, Clases, Async/Await, Arrow Functions, Destructuring, Spread Operator.
 
----
+Web Components - Custom Elements, Shadow DOM, HTML Templates.
 
-## 👨‍💻 Desarrollador
+Firebase Realtime Database - Persistencia en la nube vía REST API (fetch).
 
-Proyecto individual desarrollado para la automatizacion de la planta Acme en Macondo.
+Fetch API - Peticiones HTTP asíncronas optimizadas.
 
----
 
-## 📄 Licencia
+Responsive Design
+El sistema es completamente responsive mediante breakpoints nativos:
 
-Proyecto academico. Todos los derechos reservados.
+Desktop (> 768px): Sidebar fijo a la izquierda, área de contenido principal fluido a la derecha.
+
+Tablet/Mobile (<= 768px): Sidebar colapsable intermitente activado por botón hamburguesa (≡), layouts reestructurados en una sola columna.
+
+Small Mobile (<= 480px): Grids de 1 columna estrictos, tablas adaptativas con scroll horizontal.
+
+
+Consideraciones de Seguridad
+Las contraseñas se almacenan en texto plano en Firebase, ya que el proyecto corresponde a un ejercicio académico.
+
+Para entornos productivos reales se recomienda implementar hashing criptográfico (ej. bcrypt) y migrar hacia Firebase Auth.
+
+La base de datos opera bajo reglas públicas de lectura/escritura temporal para facilitar la simulación.
+
+📊 Datos de Prueba (Opcional)
+Para probar el sistema rápidamente, puede crear los siguientes productos:
+
+Materias Primas:
+
+Código	Nombre	Stock Inicial
+MP-001	Harina de trigo	10000
+MP-002	Mantequilla	5000
+MP-003	Huevo (unidad)	1000
+MP-004	Azúcar	8000
+MP-005	Chocolate	3000
+
+Producto Terminado (ejemplo):
+
+Código	Nombre	Fórmula
+PT-001	Galleta de mantequilla	100g Harina + 100g Mantequilla + 1 Huevo
+👨‍💻 Desarrollador
+Proyecto individual desarrollado para la automatización de la planta Acme en Macondo.
+
+📄 Licencia
+Proyecto académico. Todos los derechos reservados.
